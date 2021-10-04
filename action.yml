@@ -1,0 +1,42 @@
+name: 'D365FO Asset Upload'
+description: 'Action to upload a software deployable package to an LCS project Asset Library.'
+branding:
+  icon: 'award'  
+  color: 'blue'
+inputs:
+  ProjectId: 
+    description: 'The project id for the Dynamics 365 for Finance & Operations project inside LCS'
+    required: true
+    default: '123456'
+  ClientId: 
+    description: 'The Azure Registered Application Id / Client Id obtained while creating a Registered App inside the Azure Portal'
+    required: true
+    default: ''
+  Username: 
+    description: 'The username of the account that you want to impersonate'
+    required: true
+    default: ''
+  Password: 
+    description: 'The password of the account that you want to impersonate'
+    required: true
+    default: ''
+  FilePath: 
+    description: 'Path to the file that you want to upload to the Asset Library on LCS'
+    required: true
+    default: ''
+  FileName: 
+    description: 'Name of the file that you want to upload to the Asset Library on LCS'
+    required: true
+    default: ''
+outputs:
+  LCSAssetId:
+    description: "Asset Id"
+    value: ${{ steps.lcsAssetId.outputs.AssetId }}
+runs:
+  using: "composite"
+  steps:
+    - run: |
+      $Asset = ${{ github.action_path }}/LcsAssetUpload.ps1 -ProjectId ${{ inputs.ProjectId }} -ClientId ${{ inputs.ClientId }}  -Username "${{ inputs.Username }}" -Password "${{ inputs.Password }}" -FilePath "${{ inputs.FilePath }}" -FileName "${{ inputs.FileName }}"
+      echo "::set-output name=AssetId::$(echo $Asset.AssetId)"
+      shell: powershell
+      id: lcsAssetId
