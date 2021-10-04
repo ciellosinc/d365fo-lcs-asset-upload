@@ -35,8 +35,9 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - run: |
-      $Asset = ${{ github.action_path }}/LcsAssetUpload.ps1 -ProjectId ${{ inputs.ProjectId }} -ClientId ${{ inputs.ClientId }}  -Username "${{ inputs.Username }}" -Password "${{ inputs.Password }}" -FilePath "${{ inputs.FilePath }}" -FileName "${{ inputs.FileName }}"
-      echo "::set-output name=AssetId::$(echo $Asset.AssetId)"
-      shell: powershell
-      id: lcsAssetId
+    - name : 'Execute'
+    id: lcsAssetId
+    shell: powershell
+    run: |
+        $Asset = ${{ github.action_path }}/LcsAssetUpload.ps1 -ProjectId ${{ inputs.ProjectId }} -ClientId ${{ inputs.ClientId }}  -Username "${{ inputs.Username }}" -Password "${{ inputs.Password }}" -FilePath "${{ inputs.FilePath }}" -FileName "${{ inputs.FileName }}"
+        echo "::set-output name=AssetId::$(echo $Asset.AssetId)"
