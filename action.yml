@@ -1,31 +1,40 @@
-name: 'D365FO Create Deployable Package'
-description: 'Action to create a deployable package for Dynamics 365 for Finance and Operations.'
+name: 'D365FO Asset Upload'
+description: 'Action to upload a software deployable package to an LCS project Asset Library.'
 branding:
   icon: 'award'  
   color: 'blue'
 inputs:
-  xppToolsPath: 
-    description: 'X++ Tools Path. On a VM this will be the bin folder in the PackagesLocalDirectory, on hosted agents this should be the path where the compiler NuGet was installed.'
+  ProjectId: 
+    description: 'The project id for the Dynamics 365 for Finance & Operations project inside LCS'
+    required: true
+    default: '123456'
+  ClientId: 
+    description: 'The Azure Registered Application Id / Client Id obtained while creating a Registered App inside the Azure Portal'
     required: true
     default: ''
-  xppBinariesPath: 
-    description: 'Location of the X++ binaries to package. Location of the X++ binaries that should be packaged, or the default path for the search pattern.'
-    required: true
-    default: '*'
-  xppBinariesSearch: 
-    description: 'Search pattern for binaries to package. Optional search pattern for the packages to include from the binaries location. Wildcards can be used, or a list of packages by specifying one package name per line.'
+  Username: 
+    description: 'The username of the account that you want to impersonate'
     required: true
     default: ''
-  deployablePackagePath: 
-    description: 'Filename and path for the deployable package. Path including filename for the new deployable package.'
+  Password: 
+    description: 'The password of the account that you want to impersonate'
     required: true
     default: ''
-  deploymentFolder: 
-    description: 'Deployment folder for additional files. Advanced settings for additional files from deployment.'
-    required: false
+  FilePath: 
+    description: 'Path to the file that you want to upload to the Asset Library on LCS'
+    required: true
     default: ''
+  FileName: 
+    description: 'Name of the file that you want to upload to the Asset Library on LCS'
+    required: true
+    default: ''
+outputs:
+  LCSAssetId:
+    description: "Asset Id"
+    value: ${{ steps.lcsAssetId.outputs.AssetId }}
 runs:
   using: "composite"
   steps:
-    - run: ${{ github.action_path }}/CreateDeployablePackage.ps1 -xppToolsPath "${{ inputs.xppToolsPath }}" -xppBinariesPath "${{ inputs.xppBinariesPath }}"  -xppBinariesSearch "${{ inputs.xppBinariesSearch }}" -deployablePackagePath "${{ inputs.deployablePackagePath }}" -deploymentFolder "${{ inputs.deploymentFolder }}"
-      shell: powershell
+  - id: lcsAssetId
+    shell: powershell
+    run: $Asset = ${{ github.action_path }}/LcsAssetUpload.ps1 -ProjectId ${{ inputs.ProjectId }} -ClientId ${{ inputs.ClientId }}  -Username "${{ inputs.Username }}" -Password "${{ inputs.Password }}" -FilePath "${{ inputs.FilePath }}" -FileName "${{ inputs.FileName }}";echo "::set-output name=AssetId::$(echo $Asset.AssetId)"
