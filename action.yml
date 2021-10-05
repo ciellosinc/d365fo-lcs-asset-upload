@@ -28,10 +28,6 @@ inputs:
     description: 'Name of the file that you want to upload to the Asset Library on LCS'
     required: true
     default: ''
-outputs:
-  LCSAssetId:
-    description: "Asset Id"
-    value: ${{ steps.lcsAssetId.outputs.AssetId }}
 runs:
   using: "composite"
   steps:
