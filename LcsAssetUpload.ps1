@@ -23,5 +23,5 @@ if( -not ((Get-InstalledModule -Name d365fo.tools).Name -eq 'd365fo.tools'))
     Install-Module -Name d365fo.tools -AllowClobber -Scope CurrentUser -Force -Confirm:$false
 }
 Get-D365LcsApiToken -ClientId $ClientId -Username $Username -Password $Password -LcsApiUri "https://lcsapi.lcs.dynamics.com" -Verbose | Set-D365LcsApiConfig -ProjectId $ProjectId
-return Invoke-D365LcsUpload -FilePath $FilePath -FileType "SoftwareDeployablePackage" -FileName $FileName
+return Invoke-D365LcsUpload -FilePath $FilePath -FileType "SoftwareDeployablePackage" -FileName $FileName -Verbose
 
