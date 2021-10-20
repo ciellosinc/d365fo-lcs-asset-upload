@@ -10,15 +10,19 @@
         [string]$FileName)
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 #Check Modules installed
-if( -not ((Get-PackageProvider -Name nuget).Name -eq 'NuGet'))
+$NuGet = Get-PackageProvider -Name nuget -ErrorAction SilentlyContinue
+$Az = Get-InstalledModule -Name AZ -ErrorAction SilentlyContinue
+$DfoTools = Get-InstalledModule -Name d365fo.tools -ErrorAction SilentlyContinue
+
+if([string]::IsNullOrEmpty($NuGet))
 {
     Install-PackageProvider nuget -Scope CurrentUser -Force -Confirm:$false
 }
-if( -not ((Get-InstalledModule -Name AZ).Name -eq 'Az'))
+if([string]::IsNullOrEmpty($Az))
 {
     Install-Module -Name AZ -AllowClobber -Scope CurrentUser -Force -Confirm:$False -SkipPublisherCheck
 }
-if( -not ((Get-InstalledModule -Name d365fo.tools).Name -eq 'd365fo.tools'))
+if([string]::IsNullOrEmpty($DfoTools))
 {
     Install-Module -Name d365fo.tools -AllowClobber -Scope CurrentUser -Force -Confirm:$false
 }
